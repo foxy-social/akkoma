@@ -1,4 +1,4 @@
-FROM postgres:14-alpine
+FROM postgres:15-alpine
 
 ARG UID=1000
 ARG GID=1000

@@ -160,7 +160,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "tag feed description"
 msgid "These are public toots tagged with #%{tag}. You can interact with them if you have an account anywhere in the fediverse."
-msgstr ""
+msgstr "These are public yaps tagged with #%{tag}. You can interact with them if you have an account anywhere in the fediverse."
 
 #: lib/pleroma/web/templates/o_auth/o_auth/oob_token_exists.html.eex:3
 #, elixir-autogen, elixir-format
