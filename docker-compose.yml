@@ -1,5 +1,8 @@
 version: "3.7"
 
+volumes:
+  elastic_data: {}
+
 services:
   db:
     image: akkoma-db:latest
@@ -44,6 +47,20 @@ services:
     ]
     volumes:
       - .:/opt/akkoma
+
+  elasticsearch:
+    image: elasticsearch:7.17.10
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    logging:
+      driver: "none"
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=elastic
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
 
   # Uncomment the following if you want to use a reverse proxy
   #proxy:

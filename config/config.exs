@@ -851,7 +851,7 @@ config :pleroma, ConcurrentLimiter, [
 
 config :pleroma, Pleroma.Web.WebFinger, domain: nil, update_nickname_on_user_fetch: true
 
-config :pleroma, Pleroma.Search, module: Pleroma.Search.DatabaseSearch
+config :pleroma, Pleroma.Search, module: Pleroma.Search.Elasticsearch
 
 config :pleroma, Pleroma.Search.Meilisearch,
   url: "http://127.0.0.1:7700/",
@@ -859,11 +859,14 @@ config :pleroma, Pleroma.Search.Meilisearch,
   initial_indexing_chunk_size: 100_000
 
 config :pleroma, Pleroma.Search.Elasticsearch.Cluster,
-  url: "http://localhost:9200",
+  url: "http://elasticsearch:9200",
   username: "elastic",
-  password: "changeme",
+  password: "elastic",
   api: Elasticsearch.API.HTTP,
   json_library: Jason,
+  default_options: [
+    ssl: [verify: :verify_none]
+  ],
   indexes: %{
     activities: %{
       settings: "priv/es-mappings/activity.json",
