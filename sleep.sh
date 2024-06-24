@@ -1,4 +1,4 @@
 #!/bin/sh
 while true; do
-  sleep 10
+  sleep 1
 done
