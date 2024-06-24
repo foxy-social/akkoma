@@ -410,7 +410,7 @@ defmodule Pleroma.Web.ApiSpec.AccountOperation do
       operationId: "AccountController.blocks",
       description: "View your blocks. See also accounts/:id/{block,unblock}",
       security: [%{"oAuth" => ["read:blocks"]}],
-      parameters: pagination_params(),
+      parameters: [with_relationships_param() | pagination_params()],
       responses: %{
         200 => Operation.response("Accounts", "application/json", array_of_accounts())
       }
@@ -447,6 +447,20 @@ defmodule Pleroma.Web.ApiSpec.AccountOperation do
       security: [%{"oAuth" => ["read:accounts"]}],
       responses: %{
         200 => empty_array_response()
+      }
+    }
+  end
+
+  def preferences_operation do
+    %Operation{
+      tags: ["Account Preferences"],
+      description: "Preferences defined by the user in their account settings.",
+      summary: "Preferred common behaviors to be shared across clients.",
+      operationId: "AccountController.preferences",
+      security: [%{"oAuth" => ["read:accounts"]}],
+      responses: %{
+        200 => Operation.response("Preferences", "application/json", Account),
+        401 => Operation.response("Error", "application/json", ApiError)
       }
     }
   end
@@ -709,6 +723,12 @@ defmodule Pleroma.Web.ApiSpec.AccountOperation do
           description:
             "Number of days after which statuses will be deleted. Set to -1 to disable."
         },
+        permit_followback: %Schema{
+          allOf: [BooleanLike],
+          nullable: true,
+          description:
+            "Whether follow requests from accounts the user is already following are auto-approved (when locked)."
+        },
         accepts_direct_messages_from: %Schema{
           type: :string,
           enum: [
@@ -740,6 +760,7 @@ defmodule Pleroma.Web.ApiSpec.AccountOperation do
         discoverable: false,
         actor_type: "Person",
         status_ttl_days: 30,
+        permit_followback: true,
         accepts_direct_messages_from: "everybody"
       }
     }
@@ -767,7 +788,7 @@ defmodule Pleroma.Web.ApiSpec.AccountOperation do
           "showing_reblogs" => true,
           "followed_by" => true,
           "blocking" => false,
-          "blocked_by" => true,
+          "blocked_by" => false,
           "muting" => false,
           "muting_notifications" => false,
           "note" => "",
@@ -783,7 +804,7 @@ defmodule Pleroma.Web.ApiSpec.AccountOperation do
           "showing_reblogs" => true,
           "followed_by" => true,
           "blocking" => false,
-          "blocked_by" => true,
+          "blocked_by" => false,
           "muting" => true,
           "muting_notifications" => false,
           "note" => "",

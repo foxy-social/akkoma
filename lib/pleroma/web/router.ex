@@ -477,13 +477,13 @@ defmodule Pleroma.Web.Router do
     pipe_through(:api)
 
     get(
-      "/api/v1/akkoma/preferred_frontend/available",
+      "/preferred_frontend/available",
       FrontendSettingsController,
       :available_frontends
     )
 
     put(
-      "/api/v1/akkoma/preferred_frontend",
+      "/preferred_frontend",
       FrontendSettingsController,
       :update_preferred_frontend
     )
@@ -629,6 +629,8 @@ defmodule Pleroma.Web.Router do
     post("/tags/:id/follow", TagController, :follow)
     post("/tags/:id/unfollow", TagController, :unfollow)
     get("/followed_tags", TagController, :show_followed)
+
+    get("/preferences", AccountController, :preferences)
   end
 
   scope "/api/web", Pleroma.Web do
@@ -798,13 +800,9 @@ defmodule Pleroma.Web.Router do
   scope "/", Pleroma.Web.ActivityPub do
     pipe_through([:activitypub_client])
 
-    get("/api/ap/whoami", ActivityPubController, :whoami)
     get("/users/:nickname/inbox", ActivityPubController, :read_inbox)
 
     get("/users/:nickname/outbox", ActivityPubController, :outbox)
-    post("/users/:nickname/outbox", ActivityPubController, :update_outbox)
-    post("/api/ap/upload_media", ActivityPubController, :upload_media)
-
     get("/users/:nickname/collections/featured", ActivityPubController, :pinned)
   end
 
