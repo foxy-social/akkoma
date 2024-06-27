@@ -103,7 +103,7 @@ defmodule Pleroma.Web.MediaProxy do
     base64 = Base.url_encode64(url, @base64_opts)
 
     sig64 =
-      base64
+      url
       |> signed_url()
       |> Base.url_encode64(@base64_opts)
 
@@ -122,18 +122,20 @@ defmodule Pleroma.Web.MediaProxy do
     build_preview_url(sig64, base64, filename(url), preview_params)
   end
 
-  def decode_url(sig, url) do
-    with {:ok, sig} <- Base.url_decode64(sig, @base64_opts),
-         signature when signature == sig <- signed_url(url) do
-      {:ok, Base.url_decode64!(url, @base64_opts)}
+  def decode_url(sig64, url64) do
+    {:ok, sig} = Base.url_decode64(sig64, @base64_opts)
+    url = Base.url_decode64!(url64, @base64_opts)
+
+    if sig == signed_url(url) do
+      {:ok, url}
     else
-      _ -> {:error, :invalid_signature}
+      {:error, :invalid_signature}
     end
   end
 
   def decode_url(encoded) do
-    [_, "proxy", sig, base64 | _] = URI.parse(encoded).path |> String.split("/")
-    decode_url(sig, base64)
+    [_, "proxy", sig64, base64 | _] = URI.parse(encoded).path |> String.split("/")
+    decode_url(sig64, base64)
   end
 
   defp signed_url(url) do
